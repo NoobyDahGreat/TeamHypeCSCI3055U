@@ -16,6 +16,7 @@ class Pokedex : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
         setContentView(R.layout.activity_pokedex)
 
+
         val search = findViewById(R.id.searchButton) as Button
         val favButton = findViewById(R.id.favoritesButton) as Button
         val createButoon = findViewById(R.id.createButton) as Button

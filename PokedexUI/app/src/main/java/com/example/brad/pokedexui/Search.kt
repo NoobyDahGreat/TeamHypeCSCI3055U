@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.SearchView
@@ -38,11 +39,20 @@ class Search : AppCompatActivity() {
                 }
                 return false
             }
+
         })
 
 
-        val serchResult = findViewById(R.id.SearchResults) as ListView
-        serchResult.adapter = mAdapter
+        val searchResult = findViewById(R.id.SearchResults) as ListView
+        searchResult.adapter = mAdapter
+        searchResult.onItemClickListener = object : AdapterView.OnItemClickListener {
+            override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                startActivity(intentFor<Pokemon>("ID" to mAdapter.getItem(p2).id))
+                // /throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        }
+
+
 
     }
 
