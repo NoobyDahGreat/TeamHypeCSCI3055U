@@ -35,6 +35,16 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:id="@+id/editText7"
-        android:layout_toLeftOf="@+id/imageButton" />
+        android:layout_toLeftOf="@+id/imageButton"
+        android:layout_above="@+id/fav_view" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@+id/imageButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/imageButton"
+        android:id="@+id/fav_view" />
 
 </RelativeLayout>

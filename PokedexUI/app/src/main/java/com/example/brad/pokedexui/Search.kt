@@ -18,10 +18,10 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_page)
-        val mAdapter = MyAdapter(this);
+        var mAdapter = MyAdapter(this);
         val searchbox = findViewById(R.id.searchView) as SearchView
 
-        searchbox.queryHint = "search for pokemon"
+        searchbox.queryHint = "search for pokemon "
 
         searchbox.onQueryTextListener {
             onQueryTextChange { x ->
@@ -81,7 +81,6 @@ class Search : AppCompatActivity() {
         val pokeApi = PokeApiClient()
         return pokeApi.getPokemonList(0,721).results.map { p -> PokemonRef(p.name,p.id) }
     }
-
 
 }
 

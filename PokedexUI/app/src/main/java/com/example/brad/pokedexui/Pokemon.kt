@@ -66,8 +66,8 @@ class FavDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx,
 
     override fun onCreate(db: SQLiteDatabase) {
         db.createTable("Pokemon", true,
-                "id" to INTEGER + PRIMARY_KEY,
-                "name" to TEXT)
+                "name" to TEXT,
+                "id" to INTEGER + PRIMARY_KEY)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
