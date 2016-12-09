@@ -18,30 +18,35 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_page)
-        var mAdapter = MyAdapter(this);
+        var searchText : String = ""
+        if (this.intent.hasExtra("name"))
+            searchText = this.intent.extras.get("name").toString()
+        val mAdapter = MyAdapter(this);
         val searchbox = findViewById(R.id.searchView) as SearchView
 
-        searchbox.queryHint = "search for pokemon "
 
-        searchbox.onQueryTextListener {
-            onQueryTextChange { x ->
-                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(x.toString().toLowerCase()) }
-                if (x.isNullOrBlank()){
-                    mAdapter.search = mAdapter.list
-                }
-                false
-            }
-            onQueryTextSubmit { x ->
-                mAdapter.search = mAdapter.list.filter { x ->
-                    x.name.contains(x.toString().toLowerCase())
-                }
-                if (x.isNullOrBlank()){
-                    mAdapter.search = mAdapter.list
-                }
-                false
-            }
-        }
-/*
+
+//        searchbox.onQueryTextListener {
+//            onQueryTextChange { x ->
+//                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(x.toString()) }
+//                if (x.isNullOrBlank()){
+//                    mAdapter.search = mAdapter.list
+//                }
+//                false
+//            }
+//            onQueryTextSubmit { x ->
+//                mAdapter.search = mAdapter.list.filter { x ->
+//                    x.name.contains(x.toString())
+//                }
+//                if (x.isNullOrBlank()){
+//                    mAdapter.search = mAdapter.list
+//                }
+//                false
+//            }
+//        }
+
+
+
         searchbox.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(p0: String?): Boolean {
                 mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString().toLowerCase()) }
@@ -61,7 +66,12 @@ class Search : AppCompatActivity() {
                 return false
             }
 
-        })*/
+        })
+        searchbox.queryHint = "search for pokemon "
+        if (!searchText.isNullOrEmpty()) {
+            searchbox.setQuery(searchText, true)
+            searchbox.isIconified = false
+        }
 
 
         val searchResult = findViewById(R.id.SearchResults) as ListView

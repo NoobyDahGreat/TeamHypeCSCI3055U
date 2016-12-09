@@ -20,13 +20,13 @@ class Pokedex : AppCompatActivity() {
 
         val search = findViewById(R.id.searchButton) as Button
         val favButton = findViewById(R.id.favoritesButton) as Button
-        val createButoon = findViewById(R.id.createButton) as Button
+        //val createButoon = findViewById(R.id.createButton) as Button
 
 
 
         search.onClick { startActivity(intentFor<Search>()) }
         favButton.onClick { startActivity(intentFor<Favorites>())}
-        createButoon.onClick { startActivity(intentFor<CreateTeam>()) }
+        //createButoon.onClick { startActivity(intentFor<CreateTeam>()) }
     }
 
 }

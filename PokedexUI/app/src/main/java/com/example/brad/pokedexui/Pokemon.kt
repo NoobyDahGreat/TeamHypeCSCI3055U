@@ -23,7 +23,7 @@ class Pokemon : AppCompatActivity() {
         val db = FavDatabaseOpenHelper.getInstance(this.applicationContext).writableDatabase
 
         val nameText = findViewById(R.id.pokemon_name) as TextView
-        nameText.text = pokemon.name
+        nameText.text = pokemon.name[0].toUpperCase() + pokemon.name.substring(1)
 
         val sprite = findViewById(R.id.pokemon_sprite) as ImageView
         val spriteUrl = URL(pokemon.sprites.frontDefault)
@@ -34,7 +34,11 @@ class Pokemon : AppCompatActivity() {
 
         val descriptionText = findViewById(R.id.pokemon_description) as TextView
         
-        val info = "Id: " + pokemon.id.toString() + "\nHeight: " + pokemon.height.toString() + "\nWeight: " + pokemon.weight.toString() + "\nTypes: " + pokemon.types.type.name.toString()
+        var info = "Id: " + pokemon.id.toString() + "\nHeight: " + pokemon.height.toString() +
+                "\nWeight: " + pokemon.weight.toString() + "\nTypes: "
+        for (type in pokemon.types) {
+            info += type.type.name[0].toUpperCase() + type.type.name.substring(1) + " "
+        }
         descriptionText.text = info
 
         val favButton = findViewById(R.id.fav_button) as Button
