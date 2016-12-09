@@ -16,10 +16,14 @@ import org.jetbrains.anko.db.select
 
 class Favorites : AppCompatActivity() {
 
+    var list : MutableList<FavAdapter> = arrayListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.favorites_page)
         val pokeAdapter = FavAdapter(this)
+        pokeAdapter.getList()
+        list.add(pokeAdapter)
 
         val addButton = findViewById(R.id.add_button) as ImageButton
 
@@ -62,11 +66,18 @@ class Favorites : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (list.isNotEmpty()) {
+            list[0].getList()
+            list[0].notifyDataSetInvalidated()
+       }
+    }
+
 }
 
 class FavAdapter(val activity : AppCompatActivity) : BaseAdapter() {
-    val list : List<PokemonRef> = FavDatabaseOpenHelper.getInstance(activity.applicationContext).
-            readableDatabase.select("Pokemon").parseList(rowParser { name : String, id: Int->  PokemonRef(name, id)})
+    var pokeList : List<PokemonRef> = arrayListOf()
     override fun getView(i : Int, v : View?, parent : ViewGroup?) : View {
         val item = getItem(i)
         return with(parent!!.context) {
@@ -79,15 +90,21 @@ class FavAdapter(val activity : AppCompatActivity) : BaseAdapter() {
     }
 
     override fun getItem(position : Int) : PokemonRef {
-        return list.get(position)
+        return pokeList.get(position)
     }
 
     override fun getCount() : Int {
-        return list.size
+        return pokeList.size
     }
 
     override fun getItemId(position : Int) : Long {
         return getItem(position).id.toLong()
+    }
+
+    fun getList() {
+        pokeList = FavDatabaseOpenHelper.getInstance(activity.applicationContext).
+        readableDatabase.select("Pokemon").parseList(rowParser {
+            name : String, id: Int->  PokemonRef(name, id)})
     }
 
 }
