@@ -67,7 +67,7 @@ class Search : AppCompatActivity() {
             }
 
         })
-        searchbox.queryHint = "search for pokemon "
+        searchbox.queryHint = "Search for Pokemon"
         if (!searchText.isNullOrEmpty()) {
             searchbox.setQuery(searchText, true)
             searchbox.isIconified = false
