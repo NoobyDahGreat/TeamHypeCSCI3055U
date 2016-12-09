@@ -33,7 +33,9 @@ class Pokemon : AppCompatActivity() {
 
 
         val descriptionText = findViewById(R.id.pokemon_description) as TextView
-        descriptionText.text = pokemon.toString()
+        
+        val info = "Id: " + pokemon.id.toString() + "\nHeight: " + pokemon.height.toString() + "\nWeight: " + pokemon.weight.toString() + "\nTypes: " + pokemon.types.type.name.toString()
+        descriptionText.text = info
 
         val favButton = findViewById(R.id.fav_button) as Button
         favButton.onClick { db.insert("Pokemon", "name" to pokemon.name ,"id" to pokemon.id) }
