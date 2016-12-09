@@ -12,52 +12,74 @@ import android.widget.TextView
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import java.net.URL
 import org.jetbrains.anko.db.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 class Pokemon : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pokemon)
+
         val id = this.intent.extras.get("ID").toString().toInt()
-        val pokemon = getPokemon(id)
-        val db = FavDatabaseOpenHelper.getInstance(this.applicationContext).writableDatabase
-        var isFav = db.select("Pokemon")
-                .where("id = " + id).parseList(rowParser {
-            name : String, id : Int -> PokemonRef(name, id) }).isNotEmpty()
-
-        val nameText = findViewById(R.id.pokemon_name) as TextView
-        nameText.text = pokemon.name[0].toUpperCase() + pokemon.name.substring(1)
-
+        var pokemon : me.sargunvohra.lib.pokekotlin.model.Pokemon
         val sprite = findViewById(R.id.pokemon_sprite) as ImageView
-        val spriteUrl = URL(pokemon.sprites.frontDefault)
-        val bmp = BitmapFactory.decodeStream(spriteUrl.openConnection().inputStream)
-        sprite.setImageBitmap(bmp)
-        sprite.scaleX
-
-
-        val descriptionText = findViewById(R.id.pokemon_description) as TextView
-        
-        var info = "Id: " + pokemon.id.toString() + "\nHeight: " + pokemon.height.toString() +
-                "\nWeight: " + pokemon.weight.toString() + "\nTypes: "
-        for (type in pokemon.types) {
-            info += type.type.name[0].toUpperCase() + type.type.name.substring(1) + " "
-        }
-        descriptionText.text = info
-
+        val nameText = findViewById(R.id.pokemon_name) as TextView
         val favButton = findViewById(R.id.fav_button) as Button
-        if (isFav) favButton.setText("Remove From Favorites")
-        favButton.onClick {
-            if (!isFav) {
-                db.insert("Pokemon", "name" to pokemon.name, "id" to pokemon.id)
-                favButton.setText("Remove From Favorites")
-                isFav = true
-            } else {
-                db.delete("Pokemon", "id = " + id.toString(), null)
-                favButton.setText("Add To Favorites")
-                isFav = false
+        val descriptionText = findViewById(R.id.pokemon_description) as TextView
+
+        val db = FavDatabaseOpenHelper.getInstance(this.applicationContext).writableDatabase
+        var isFav : Boolean? = null
+
+        doAsync {
+            val getFavStatus = db.select("Pokemon").where("id = " + id).parseList(rowParser {
+                name: String, id: Int -> PokemonRef(name, id) }).isNotEmpty()
+            uiThread {
+                isFav = getFavStatus
+                if (getFavStatus)
+                    favButton.setText("Remove From Favorites")
             }
         }
+
+        favButton.onClick { toast("still loading dude") }
+        descriptionText.setText("Loading...")
+        nameText.setText("LOADING")
+
+
+        doAsync {
+            val pokeRef = getPokemon(id)
+            uiThread {
+
+                pokemon = pokeRef
+                nameText.text = pokemon.name[0].toUpperCase() + pokemon.name.substring(1)
+
+                val spriteUrl = URL(pokemon.sprites.frontDefault)
+                val bmp = BitmapFactory.decodeStream(spriteUrl.openConnection().inputStream)
+                sprite.setImageBitmap(bmp)
+                var info = "Id: " + pokemon.id.toString() + "\nHeight: " + pokemon.height.toString() +
+                        "\nWeight: " + pokemon.weight.toString() + "\nTypes: "
+                for (type in pokemon.types) {
+                    info += type.type.name[0].toUpperCase() + type.type.name.substring(1) + " "
+                }
+                descriptionText.text = info
+
+                favButton.onClick {
+                    if (isFav!=null && !isFav!!) {
+                        db.insert("Pokemon", "name" to pokemon.name, "id" to pokemon.id)
+                        favButton.setText("Remove From Favorites")
+                        isFav = true
+                    } else {
+                        db.delete("Pokemon", "id = " + id.toString(), null)
+                        favButton.setText("Add To Favorites")
+                        isFav = false
+                    }
+                }
+            }
+        }
+
+
 
     }
 
