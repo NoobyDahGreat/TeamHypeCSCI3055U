@@ -64,11 +64,11 @@ class Search : AppCompatActivity() {
 
             fun operateSearch (p0: String) : Boolean {
                 if (p0.isNullOrBlank()) {
-                    mAdapter.search = mAdapter.list
+                    mAdapter.search = mAdapter.list!!
                     mAdapter.notifyDataSetChanged()
                     return true
                 } else {
-                    val sorted = mAdapter.list.filter {
+                    val sorted = mAdapter.list!!.filter {
                         x ->
                         x.name.contains(p0.toString().toLowerCase())
                     }.sortedBy { p -> p.name }
@@ -111,8 +111,8 @@ class Search : AppCompatActivity() {
 
 
 class MyAdapter(val activity : Search) : BaseAdapter() {
-    lateinit var list : List<PokemonRef>
-    var search: List<PokemonRef> = arrayListOf(PokemonRef("LOADING", 0))
+    var list : List<PokemonRef> = arrayListOf(PokemonRef("LOADING", 0))
+    var search: List<PokemonRef> = list
 
     override fun getView(i : Int, v : View?, parent : ViewGroup?) : View {
         val item = getItem(i)
