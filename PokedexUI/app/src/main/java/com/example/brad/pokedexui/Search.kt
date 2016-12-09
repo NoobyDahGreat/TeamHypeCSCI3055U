@@ -18,11 +18,30 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_page)
-        var mAdapter = MyAdapter(this);
+        val mAdapter = MyAdapter(this);
         val searchbox = findViewById(R.id.searchView) as SearchView
 
-        searchbox.queryHint = "search for pokemon "
+        searchbox.queryHint = "search for pokemon"
 
+        searchbox.onQueryTextListener {
+            onQueryTextChange { x ->
+                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(x.toString().toLowerCase()) }
+                if (x.isNullOrBlank()){
+                    mAdapter.search = mAdapter.list
+                }
+                false
+            }
+            onQueryTextSubmit { x ->
+                mAdapter.search = mAdapter.list.filter { x ->
+                    x.name.contains(x.toString().toLowerCase())
+                }
+                if (x.isNullOrBlank()){
+                    mAdapter.search = mAdapter.list
+                }
+                false
+            }
+        }
+/*
         searchbox.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(p0: String?): Boolean {
                 mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString().toLowerCase()) }
@@ -42,7 +61,7 @@ class Search : AppCompatActivity() {
                 return false
             }
 
-        })
+        })*/
 
 
         val searchResult = findViewById(R.id.SearchResults) as ListView
