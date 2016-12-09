@@ -3,6 +3,7 @@ package com.example.brad.pokedexui
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -21,6 +22,9 @@ class Pokemon : AppCompatActivity() {
         val id = this.intent.extras.get("ID").toString().toInt()
         val pokemon = getPokemon(id)
         val db = FavDatabaseOpenHelper.getInstance(this.applicationContext).writableDatabase
+        var isFav = db.select("Pokemon")
+                .where("id = " + id).parseList(rowParser {
+            name : String, id : Int -> PokemonRef(name, id) }).isNotEmpty()
 
         val nameText = findViewById(R.id.pokemon_name) as TextView
         nameText.text = pokemon.name[0].toUpperCase() + pokemon.name.substring(1)
@@ -42,7 +46,18 @@ class Pokemon : AppCompatActivity() {
         descriptionText.text = info
 
         val favButton = findViewById(R.id.fav_button) as Button
-        favButton.onClick { db.insert("Pokemon", "name" to pokemon.name ,"id" to pokemon.id) }
+        if (isFav) favButton.setText("Remove From Favorites")
+        favButton.onClick {
+            if (!isFav) {
+                db.insert("Pokemon", "name" to pokemon.name, "id" to pokemon.id)
+                favButton.setText("Remove From Favorites")
+                isFav = true
+            } else {
+                db.delete("Pokemon", "id = " + id.toString(), null)
+                favButton.setText("Add To Favorites")
+                isFav = false
+            }
+        }
 
     }
 
