@@ -25,7 +25,7 @@ class Search : AppCompatActivity() {
 
         searchbox.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(p0: String?): Boolean {
-                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString()) }
+                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString().toLowerCase()) }
                 if (p0.isNullOrBlank()){
                     mAdapter.search = mAdapter.list
                 }
@@ -33,7 +33,9 @@ class Search : AppCompatActivity() {
             }
 
             override fun onQueryTextSubmit(p0: String?): Boolean {
-                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString()) }
+                mAdapter.search = mAdapter.list.filter { x ->
+                    x.name.contains(p0.toString().toLowerCase())
+                }
                 if (p0.isNullOrBlank()){
                     mAdapter.search = mAdapter.list
                 }
@@ -67,18 +69,18 @@ class Search : AppCompatActivity() {
 
 
 class MyAdapter(val activity : Search) : BaseAdapter() {
-    var list : List<PokemonRef> = activity.getData()
+    val list : List<PokemonRef> = activity.getData()
     var search: List<PokemonRef> = list
 
     override fun getView(i : Int, v : View?, parent : ViewGroup?) : View {
         val item = getItem(i)
         return with(parent!!.context) {
             relativeLayout {
-                textView(item.name) {
+                textView(Character.toUpperCase(item.name[0])+item.name.substring(1)) {
                     textSize = 32f
                 }
                 textView(item.id.toString()) {
-                    textSize = 16f
+                    textSize = 20f
                 }.lparams {
                     alignParentBottom()
                     alignParentRight()
@@ -96,7 +98,7 @@ class MyAdapter(val activity : Search) : BaseAdapter() {
     }
 
     override fun getItemId(position : Int) : Long {
-        return getItem(position).id.toLong() as Long;
+        return getItem(position).id.toLong()
     }
 
 }
