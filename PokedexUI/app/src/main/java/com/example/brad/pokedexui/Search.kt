@@ -5,10 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
-import android.widget.ListView
-import android.widget.SearchView
+import android.widget.*
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import org.jetbrains.anko.*
 import kotlin.collections.filter
@@ -49,21 +46,36 @@ class Search : AppCompatActivity() {
 
         searchbox.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(p0: String?): Boolean {
-                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(p0.toString().toLowerCase()) }
-                if (p0.isNullOrBlank()){
-                    mAdapter.search = mAdapter.list
-                }
-                return false
+                return operateSearch(p0.toString())
             }
 
             override fun onQueryTextSubmit(p0: String?): Boolean {
-                mAdapter.search = mAdapter.list.filter { x ->
-                    x.name.contains(p0.toString().toLowerCase())
-                }
-                if (p0.isNullOrBlank()){
+                searchbox.clearFocus()
+                return operateSearch(p0.toString())
+
+            }
+
+            fun operateSearch (p0: String) : Boolean {
+                if (p0.isNullOrBlank()) {
                     mAdapter.search = mAdapter.list
+                    mAdapter.notifyDataSetChanged()
+                    return true
+                } else {
+                    val sorted = mAdapter.list.filter {
+                        x ->
+                        x.name.contains(p0.toString().toLowerCase())
+                    }.sortedBy { p -> p.name }
+                    mAdapter.search = sorted.filter {
+                        p ->
+                        p.name[0] == p0.toString()[0].toLowerCase()
+                    } + sorted.filter {
+                        p ->
+                        p.name[0] != p0.toString()[0].toLowerCase()
+                    }
+                    mAdapter.notifyDataSetChanged()
+                    return true
                 }
-                return false
+
             }
 
         })
