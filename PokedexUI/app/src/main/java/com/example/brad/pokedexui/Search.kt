@@ -1,6 +1,7 @@
 package com.example.brad.pokedexui
 
 
+
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.*
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import org.jetbrains.anko.*
-import org.jetbrains.anko.custom.async
 import kotlin.collections.filter
 
 class Search : AppCompatActivity() {
@@ -21,16 +21,8 @@ class Search : AppCompatActivity() {
             searchText = this.intent.extras.get("name").toString()
         val mAdapter = MyAdapter(this);
         val searchbox = findViewById(R.id.searchView) as SearchView
-        doAsync {
-            mAdapter.getData()
-            uiThread {
-                mAdapter.notifyDataSetChanged()
-            }
-        }
 
-
-
-//        searchbox.onQueryTextListener {
+        //        searchbox.onQueryTextListener {
 //            onQueryTextChange { x ->
 //                mAdapter.search = mAdapter.list.filter { x -> x.name.contains(x.toString()) }
 //                if (x.isNullOrBlank()){
@@ -70,7 +62,7 @@ class Search : AppCompatActivity() {
                 } else {
                     val sorted = mAdapter.list!!.filter {
                         x ->
-                        x.name.contains(p0.toString().toLowerCase())
+                        x.name.contains(p0.toString().trim().toLowerCase())
                     }.sortedBy { p -> p.name }
                     mAdapter.search = sorted.filter {
                         p ->
@@ -91,7 +83,14 @@ class Search : AppCompatActivity() {
             searchbox.setQuery(searchText, true)
             searchbox.isIconified = false
         }
+        doAsync {
+            mAdapter.getData()
+            uiThread {
+                searchbox.setQuery(searchbox.query,true)
+                mAdapter.notifyDataSetChanged()
 
+            }
+        }
 
         val searchResult = findViewById(R.id.SearchResults) as ListView
         searchResult.adapter = mAdapter
