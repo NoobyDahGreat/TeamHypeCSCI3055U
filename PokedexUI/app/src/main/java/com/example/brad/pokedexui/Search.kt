@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.async
 import kotlin.collections.filter
 
 class Search : AppCompatActivity() {
@@ -20,6 +21,12 @@ class Search : AppCompatActivity() {
             searchText = this.intent.extras.get("name").toString()
         val mAdapter = MyAdapter(this);
         val searchbox = findViewById(R.id.searchView) as SearchView
+        doAsync {
+            mAdapter.getData()
+            uiThread {
+                mAdapter.notifyDataSetChanged()
+            }
+        }
 
 
 
@@ -99,18 +106,13 @@ class Search : AppCompatActivity() {
 
     }
 
-    fun getData() : List<PokemonRef> {
-        val pokeApi = PokeApiClient()
-        return pokeApi.getPokemonList(0,721).results.map { p -> PokemonRef(p.name,p.id) }
-    }
-
 }
 
 
 
 class MyAdapter(val activity : Search) : BaseAdapter() {
-    val list : List<PokemonRef> = activity.getData()
-    var search: List<PokemonRef> = list
+    lateinit var list : List<PokemonRef>
+    var search: List<PokemonRef> = arrayListOf(PokemonRef("LOADING", 0))
 
     override fun getView(i : Int, v : View?, parent : ViewGroup?) : View {
         val item = getItem(i)
@@ -139,6 +141,12 @@ class MyAdapter(val activity : Search) : BaseAdapter() {
 
     override fun getItemId(position : Int) : Long {
         return getItem(position).id.toLong()
+    }
+
+    fun getData()  {
+        val pokeApi = PokeApiClient()
+        list = pokeApi.getPokemonList(0,721).results.map { p -> PokemonRef(p.name,p.id) }
+        search = list
     }
 
 }
